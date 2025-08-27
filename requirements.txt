@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+pydantic
+email-validator
+sqlalchemy
+psycopg[binary]
+redis
+boto3
+opensearch-py
+celery
+python-multipart
+passlib
+bcrypt==3.2.2
+pyjwt
