@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 
 from .. import schemas
@@ -100,3 +100,14 @@ def create_hr(payload: schemas.CreateHRRequest, db: Session = Depends(get_db), c
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.get("/users", response_model=list[schemas.UserPublic])
+def list_users(role: str | None = Query(None), db: Session = Depends(get_db), current: User = Depends(get_current_user)):
+    # only admin can list users
+    if current.role != RoleEnum.admin.value:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    q = db.query(User)
+    if role:
+        q = q.filter(User.role == role)
+    return q.order_by(User.created_at.asc()).all()

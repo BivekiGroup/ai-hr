@@ -1,0 +1,6 @@
+Alembic migrations for the gateway service.
+
+Useful commands (from this directory or with -c alembic.ini):
+- alembic upgrade head
+- alembic downgrade -1
+

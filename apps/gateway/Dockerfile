@@ -15,8 +15,15 @@ RUN pip install --no-cache-dir \
     passlib \
     bcrypt==3.2.2 \
     pyjwt \
-    python-multipart
+    python-multipart \
+    openai \
+    pdfminer.six \
+    python-docx \
+    alembic
 
 COPY app ./app
+# Alembic migrations
+COPY alembic.ini ./alembic.ini
+COPY alembic ./alembic
 EXPOSE 8080
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

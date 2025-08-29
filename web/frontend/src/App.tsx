@@ -15,6 +15,7 @@ import HRDashboard from '@/pages/HRDashboard';
 import UserDashboard from '@/pages/UserDashboard';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Toaster } from 'sonner';
+import { TopProgress } from '@/components/ui/top-progress';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           </main>
           <Footer />
           <Toaster richColors position="top-center" />
+          <TopProgress />
         </div>
       </AuthProvider>
     </BrowserRouter>

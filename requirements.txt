@@ -12,3 +12,7 @@ python-multipart
 passlib
 bcrypt==3.2.2
 pyjwt
+openai
+pdfminer.six
+python-docx
+alembic

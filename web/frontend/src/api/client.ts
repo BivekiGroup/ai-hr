@@ -31,6 +31,8 @@ async function tryRefresh(): Promise<void> {
 }
 
 export async function api<T>(path: string, options: { method?: HttpMethod; body?: any; headers?: Record<string, string> } = {}): Promise<T> {
+  // Notify global listeners that a request began
+  try { window.dispatchEvent(new CustomEvent('apiload', { detail: { delta: +1, path, method: options.method || 'GET' } })) } catch {}
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
@@ -58,10 +60,22 @@ export async function api<T>(path: string, options: { method?: HttpMethod; body?
     }
   }
   if (!res.ok) {
+    try { window.dispatchEvent(new CustomEvent('apiload', { detail: { delta: -1, path, method: options.method || 'GET' } })) } catch {}
     const text = await res.text().catch(() => '')
     throw new Error(text || res.statusText)
   }
-  return res.json() as Promise<T>
+  if (res.status === 204) {
+    try { window.dispatchEvent(new CustomEvent('apiload', { detail: { delta: -1, path, method: options.method || 'GET' } })) } catch {}
+    return undefined as unknown as T
+  }
+  const ct = res.headers.get('content-type') || ''
+  if (!ct.includes('application/json')) {
+    try { window.dispatchEvent(new CustomEvent('apiload', { detail: { delta: -1, path, method: options.method || 'GET' } })) } catch {}
+    return undefined as unknown as T
+  }
+  const data = await res.json() as T
+  try { window.dispatchEvent(new CustomEvent('apiload', { detail: { delta: -1, path, method: options.method || 'GET' } })) } catch {}
+  return data
 }
 
 export type Tokens = { access_token: string; refresh_token: string; token_type: string }
